@@ -1,16 +1,11 @@
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-
-import javax.annotation.PostConstruct;
 
 /**
  *   __author__: Salman M Rahman
@@ -34,21 +29,28 @@ public class Mapper_Time extends Mapper<Object, Text, Text, IntWritable> {
         Matcher matcher = pattern.matcher(tweets);
 
         // store linux times in array_list
-        ArrayList<Long> array_list = new ArrayList<Long>();
+        ArrayList<String> array_list = new ArrayList<String>();
 
-        // data cleaning for unixtimestamp and tweet id. Then add the bulk string to str_builder
+        // hashMap to be used for storing (key=value) for (hours range=counter)
+        HashMap<String, Integer> hashMap = new HashMap<String, Integer>();
+
+        // data cleaning for unixtimestamp and tweet id. Then add each to array_list
         while (matcher.find()) {
-            String unix_time = matcher.group(0) + '\n';
-            unix_time = unix_time.substring(0, unix_time.length() - 21);
+            String nixTime_TwID = matcher.group(0) + '\n';
 
-            Long time_int = Long.parseLong(unix_time);
-            array_list.add(time_int);
+            // convert epoch to date and time and remove tweet id and trailing 3 zeros
+            String unix_time = nixTime_TwID.substring(0, nixTime_TwID.length() - 24);
+
+            // date gives us the
+            String date = new java.text.SimpleDateFormat("MM/dd/YYYY HH:mm:ss").format
+                    (new java.util.Date (Long.parseLong(unix_time)*1000));
+
+            array_list.add(date);
         }
 
         System.out.println(array_list);
 
         data.set(tweets);
         context.write(data, one);
-
     }
 }
