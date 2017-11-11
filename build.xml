@@ -1,4 +1,4 @@
-<project name="CW-Data_Length" default="dist" basedir=".">
+<project name="hadoop_cx" default="dist" basedir=".">
     <description>
         Sample MapReduce project build file
     </description>

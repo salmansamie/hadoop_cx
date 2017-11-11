@@ -1,4 +1,3 @@
-import java.sql.Time;
 import java.util.Arrays;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -32,6 +31,9 @@ public class TimeAnalysis {
         FileOutputFormat.setOutputPath(job, outputPath);
         outputPath.getFileSystem(conf).delete(outputPath,true);
         job.waitForCompletion(true);
+
+        // Set job.setNumReduceTasks(value) below to run map-reduce on the cluster
+        //job.setNumReduceTasks(3);
     }
 
     public static void main(String[] args) throws Exception {
