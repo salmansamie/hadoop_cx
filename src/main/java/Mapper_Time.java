@@ -16,6 +16,10 @@ public class Mapper_Time extends Mapper<Object, Text, Text, IntWritable> {
     private final IntWritable one = new IntWritable(1);
     private Text data = new Text("0");
 
+    private String StringTemplater(int hr, int mn) {
+        return (Integer.toString(hr) +"-"+  Integer.toString(mn));
+    }
+
     public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 
         // This is routine task to convert all the data toString
@@ -47,7 +51,8 @@ public class Mapper_Time extends Mapper<Object, Text, Text, IntWritable> {
             int hr_token = Integer.parseInt(time_token.nextToken(":"));
             int mn_token = Integer.parseInt(time_token.nextToken(":"));
 
-            System.out.println(hr_token + "|" + mn_token);
+            //test
+            System.out.println(StringTemplater(hr_token,mn_token));
 
             data.set(date);
             context.write(data, one);
