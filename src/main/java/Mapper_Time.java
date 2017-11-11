@@ -16,10 +16,6 @@ public class Mapper_Time extends Mapper<Object, Text, Text, IntWritable> {
     private final IntWritable one = new IntWritable(1);
     private Text data = new Text("0");
 
-    private String StringTemplater(int hr, int mn) {
-        return (Integer.toString(hr) +"-"+  Integer.toString(mn));
-    }
-
     public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 
         // This is routine task to convert all the data toString
@@ -43,21 +39,31 @@ public class Mapper_Time extends Mapper<Object, Text, Text, IntWritable> {
             String unix_time = nixTime_TwID.substring(0, nixTime_TwID.length() - 24);
 
             // Date gives us the hour and minute formatted as 14:39
-            String date = new java.text.SimpleDateFormat("HH:mm").format
+            String HR_MN = new java.text.SimpleDateFormat("HH:mm").format
                     (new java.util.Date (Long.parseLong(unix_time)*1000));
 
             // Tokenize hours and minutes by delimiters
-            StringTokenizer time_token = new StringTokenizer(date);
+            StringTokenizer time_token = new StringTokenizer(HR_MN);
             int hr_token = Integer.parseInt(time_token.nextToken(":"));
             int mn_token = Integer.parseInt(time_token.nextToken(":"));
 
-            //test
-            System.out.println(StringTemplater(hr_token,mn_token));
+            // String template for keys at hashMap to form time range like 14-15
+            String store = Integer.toString(hr_token) +"-"+  Integer.toString(hr_token + 1);
 
-            data.set(date);
-            context.write(data, one);
+            // Add new key OR Increment existing Values for corresponding Keys in hashMap
+            if (!hashMap.containsKey(store)) {
+                hashMap.put(store, 1);
+                data.set(HR_MN);
+                context.write(data, one);
+            }
+            else if (hashMap.containsKey(store) && mn_token >= 0) {
+                hashMap.put(store, hashMap.get(store) + 1);
+                data.set(HR_MN);
+                context.write(data, one);
+            }
+//            data.set(date);
+//            context.write(data, one);
+            System.out.println(hashMap);
         }
-
-        //System.out.println(hashMap);
     }
 }
