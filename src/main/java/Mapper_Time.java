@@ -53,17 +53,12 @@ public class Mapper_Time extends Mapper<Object, Text, Text, IntWritable> {
             // Add new key OR Increment existing Values for corresponding Keys in hashMap
             if (!hashMap.containsKey(store)) {
                 hashMap.put(store, 1);
-                data.set(HR_MN);
-                context.write(data, one);
             }
             else if (hashMap.containsKey(store) && mn_token >= 0) {
                 hashMap.put(store, hashMap.get(store) + 1);
-                data.set(HR_MN);
-                context.write(data, one);
             }
-//            data.set(date);
-//            context.write(data, one);
-            System.out.println(hashMap);
+            data.set(store);
+            context.write(data, one);
         }
     }
 }
